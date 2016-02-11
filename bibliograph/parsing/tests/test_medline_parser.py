@@ -1,10 +1,16 @@
 import unittest
 from zope.interface.verify import verifyObject
 
-from bibliograph.parsing.tests import setup
-from bibliograph.parsing.tests.base import TestEntries
 from bibliograph.parsing.parsers.medline import MedlineParser
 from bibliograph.parsing.interfaces import IBibliographyParser
+
+from bibliograph.parsing.tests import (
+    ENDNOTE_TEST_SOURCE,
+    MEDLINE_TEST_MED,
+    RIS_SOURCE,
+)
+from bibliograph.parsing.tests.base import TestEntries
+
 
 class TestMedlineParser(unittest.TestCase):
 
@@ -16,7 +22,7 @@ class TestMedlineParser(unittest.TestCase):
         self.failUnless(verifyObject(IBibliographyParser, self.parser))
 
     def test_import(self):
-        source = open(setup.MEDLINE_TEST_MED, 'r').read()
+        source = open(MEDLINE_TEST_MED, 'r').read()
         self.failUnless(source)
 
         parser = MedlineParser()
@@ -33,9 +39,9 @@ class TestMedlineParser(unittest.TestCase):
                             'Parse failed - missing author %s' % name)
         
     def test_check_format(self):
-        s0 = open(setup.MEDLINE_TEST_MED, 'r').read()
-        s1 = open(setup.RIS_SOURCE, 'r').read()
-        s3 = open(setup.ENDNOTE_TEST_SOURCE, 'r').read()
+        s0 = open(MEDLINE_TEST_MED, 'r').read()
+        s1 = open(RIS_SOURCE, 'r').read()
+        s3 = open(ENDNOTE_TEST_SOURCE, 'r').read()
         
         self.failUnless(self.parser.checkFormat("AB  -\nAU  -\nPMID-\nTI  -"))
         self.failUnless(self.parser.checkFormat(s0), 

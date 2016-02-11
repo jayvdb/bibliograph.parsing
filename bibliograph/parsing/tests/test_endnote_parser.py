@@ -1,11 +1,17 @@
 import unittest
+
 from zope.interface.verify import verifyObject
 from zope.app.testing import ztapi
 
-from bibliograph.parsing.tests import setup
-from bibliograph.parsing.tests.base import TestEntries
 from bibliograph.parsing.parsers.endnote import EndNoteParser
 from bibliograph.parsing.interfaces import IBibliographyParser
+
+from bibliograph.parsing.tests import (
+    ENDNOTE_TEST_SOURCE,
+    RIS_SOURCE,
+)
+from bibliograph.parsing.tests.base import TestEntries
+
 
 class TestEndNoteParser(unittest.TestCase):
 
@@ -24,7 +30,7 @@ class TestEndNoteParser(unittest.TestCase):
     def test_import(self):
 
         if self.parser.isAvailable():
-            source = open(setup.ENDNOTE_TEST_SOURCE, 'r').read()
+            source = open(ENDNOTE_TEST_SOURCE, 'r').read()
             self.failUnless(source)
             entries = TestEntries(self.parser.getEntries(source))
             self.failUnless(len(entries) == 2)
@@ -61,10 +67,10 @@ class TestEndNoteParser(unittest.TestCase):
             print """\nOne or more transformationtool was not found!
 please make sure bibutils is installed to run all tests. """
             print ("-" * 20) + "\n"
-        
+
     def test_check_format(self):
-        s0 = open(setup.ENDNOTE_TEST_SOURCE, 'r').read()
-        s1 = open(setup.RIS_SOURCE, 'r').read()
+        s0 = open(ENDNOTE_TEST_SOURCE, 'r').read()
+        s1 = open(RIS_SOURCE, 'r').read()
         
         self.failUnless(self.parser.checkFormat("%0 \n%A \n%D \n%T "))
         self.failIf(self.parser.checkFormat("%0 \n%A \n%T "))

@@ -4,10 +4,15 @@ from zope.app.testing import ztapi
 from zope.app.testing.placelesssetup import setUp, tearDown
 from zope.interface.verify import verifyObject
 
-from bibliograph.parsing.tests import setup
-from bibliograph.parsing.tests.base import TestEntries
 from bibliograph.parsing.interfaces import IBibliographyParser
 from bibliograph.parsing.parsers.ris import RISParser
+
+from bibliograph.parsing.tests import (
+    ENDNOTE_TEST_SOURCE,
+    RIS_SOURCE,
+)
+from bibliograph.parsing.tests.base import TestEntries
+
 
 class testRISParser(unittest.TestCase):
     """tests to cover the RIS parser"""
@@ -30,7 +35,7 @@ class testRISParser(unittest.TestCase):
         """test the functioning of the parser"""
         parser = RISParser()
         if parser.isAvailable():
-            source = open(setup.RIS_SOURCE, 'r').read()
+            source = open(RIS_SOURCE, 'r').read()
             self.failUnless(source)
 
             entries = TestEntries(parser.getEntries(source))
@@ -69,8 +74,8 @@ please make sure bibutils is installed to run all tests. """
     def test_FormatDetection(self):
         parser = RISParser()
 
-        s1 = open(setup.RIS_SOURCE, 'r').read()
-        s2 = open(setup.ENDNOTE_TEST_SOURCE, 'r').read()
+        s1 = open(RIS_SOURCE, 'r').read()
+        s2 = open(ENDNOTE_TEST_SOURCE, 'r').read()
 
         self.failUnless(parser.checkFormat(s1), 'RIS Parser failed to detect RIS format')
         self.failIf(parser.checkFormat(s2), 'RIS Parser incorrectly detected EndNote format as RIS')

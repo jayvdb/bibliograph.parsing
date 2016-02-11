@@ -13,7 +13,21 @@
 import unittest
 
 from bibliograph.parsing.parsers.bibtex import BibtexParser
-from bibliograph.parsing.tests import setup
+from bibliograph.parsing.tests import (
+    BIBTEX_TEST_BIB,
+    BIBTEX_TEST_BIB2,
+    BIBTEX_TEST_BIB3,
+    BIBTEX_TEST_BIB_DUP,
+    BIBTEX_TEST_CITE_KEY,
+    BIBTEX_TEST_INBOOKREFERENCES,
+    BIBTEX_TEST_LASTFIELDKOMMA,
+    BIBTEX_TEST_MULTI_AUTHORS,
+    BIBTEX_TEST_TYPEFIELD,
+    IDCOOKING_TEST_BIB,
+    MEDLINE_TEST_BIB,
+    MEDLINE_TEST_MED,
+    PDFFOLDER_TEST_BIB,
+)
 from bibliograph.parsing.tests.base import TestEntries
 
 class TestBibtexParsing(unittest.TestCase):
@@ -24,22 +38,22 @@ class TestBibtexParsing(unittest.TestCase):
         self.parser = BibtexParser()
 
     def testFormatDetection(self):
-        source_files = (setup.MEDLINE_TEST_BIB, setup.BIBTEX_TEST_BIB, 
-                        setup.IDCOOKING_TEST_BIB, setup.PDFFOLDER_TEST_BIB, 
-                        setup.BIBTEX_TEST_BIB_DUP, setup.BIBTEX_TEST_MULTI_AUTHORS,
-                        setup.BIBTEX_TEST_INBOOKREFERENCES, setup.BIBTEX_TEST_LASTFIELDKOMMA,
-                        setup.BIBTEX_TEST_TYPEFIELD, setup.BIBTEX_TEST_CITE_KEY)
+        source_files = (MEDLINE_TEST_BIB, BIBTEX_TEST_BIB,
+                        IDCOOKING_TEST_BIB, PDFFOLDER_TEST_BIB,
+                        BIBTEX_TEST_BIB_DUP, BIBTEX_TEST_MULTI_AUTHORS,
+                        BIBTEX_TEST_INBOOKREFERENCES, BIBTEX_TEST_LASTFIELDKOMMA,
+                        BIBTEX_TEST_TYPEFIELD, BIBTEX_TEST_CITE_KEY)
 
         for source_file in source_files:
             source = open(source_file, 'r').read()
             self.failUnless(self.parser.checkFormat(source), 'BibTeX parser failed to detect BibTeX format in file %s' % source_file)
 
         # check negative detection (check properly rejects non-bibtex format files)
-        source = open(setup.MEDLINE_TEST_MED, 'r').read()
-        self.failIf(self.parser.checkFormat(source), 'BibTeX parser incorrectly detected BibTeX format in file %s' % setup.MEDLINE_TEST_MED)
+        source = open(MEDLINE_TEST_MED, 'r').read()
+        self.failIf(self.parser.checkFormat(source), 'BibTeX parser incorrectly detected BibTeX format in file %s' % MEDLINE_TEST_MED)
 
     def testBibtexAuthorParsing(self):
-        source = open(setup.BIBTEX_TEST_MULTI_AUTHORS, 'r').read()
+        source = open(BIBTEX_TEST_MULTI_AUTHORS, 'r').read()
         source = self.parser.preprocess(source)
         result = self.parser.parseEntry(source)
         heckman =  {'middlename': 'J.',
@@ -59,7 +73,7 @@ class TestBibtexParsing(unittest.TestCase):
         self.failUnless(author2['lastname'] == heckman['lastname'])
 
     def testBibtexInbookReferenceParsing(self):
-        source = open(setup.BIBTEX_TEST_INBOOKREFERENCES, 'r').read()
+        source = open(BIBTEX_TEST_INBOOKREFERENCES, 'r').read()
         ref = {
             'booktitle': 'In einem fiktiven Buch vor unserer Zeit',
             'title': 'Die Tage der Ankunft',
@@ -74,19 +88,19 @@ class TestBibtexParsing(unittest.TestCase):
             self.failUnless( result.has_key(key) and (ref[key] == result[key]),key )
 
     def testAnnoteParsing(self):
-        source = open(setup.BIBTEX_TEST_BIB, 'r').read()
+        source = open(BIBTEX_TEST_BIB, 'r').read()
         results = self.parser.getEntries(source)
         self.failUnless(results[-1]['annote'] == 'I really like it.')
 
     def testIdentifierParsing(self):
-        source = open(setup.BIBTEX_TEST_BIB, 'r').read()
+        source = open(BIBTEX_TEST_BIB, 'r').read()
         results = self.parser.getEntries(source)
         result = results[2]
         self.assertEqual(result['identifiers'], [{'label' : 'ISBN', 'value' : '3874402436'},
                                                  {'label' : 'DOI', 'value' : '1-23-345'}])
 
     def testBibtexTypeFieldParsing(self):
-        source = open(setup.BIBTEX_TEST_TYPEFIELD, 'r').read()
+        source = open(BIBTEX_TEST_TYPEFIELD, 'r').read()
         ref = {
             'publication_type': 'Doktorarbeit',
             'title': 'Mein Herr Doktor',
@@ -102,7 +116,7 @@ class TestBibtexParsing(unittest.TestCase):
             self.failUnless( result.has_key(key) and (ref[key] == result[key]) )
 
     def testBibtexTypeLastFieldTrailingKomma(self):
-        source = open(setup.BIBTEX_TEST_LASTFIELDKOMMA, 'r').read()
+        source = open(BIBTEX_TEST_LASTFIELDKOMMA, 'r').read()
         results = self.parser.getEntries(source)
 
         # the last field in a bibtex entry always had a trailing ","
@@ -118,7 +132,7 @@ class TestBibtexParsing2(unittest.TestCase):
         self.parser = BibtexParser()
 
     def testBibtexWithCustomFieldnames(self):
-        source = open(setup.BIBTEX_TEST_BIB2, 'r').read()
+        source = open(BIBTEX_TEST_BIB2, 'r').read()
         results = self.parser.getEntries(source)
         r1 = results[0]
         self.assertEqual(r1['month'], 'Mar')
@@ -130,7 +144,7 @@ class TestBibtexParsing2(unittest.TestCase):
         self.assertEqual(r2['keywords'], ['something strange'])
 
     def testBibtexEncodedChars(self):
-        source = open(setup.BIBTEX_TEST_BIB3, 'r').read()
+        source = open(BIBTEX_TEST_BIB3, 'r').read()
         results = self.parser.getEntries(source)
         self.assertEqual(len(results), 2)
         r = results[0]

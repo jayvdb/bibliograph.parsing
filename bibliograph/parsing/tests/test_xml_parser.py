@@ -6,10 +6,17 @@ from zope.app.testing import ztapi
 from zope.app.testing.placelesssetup import setUp, tearDown
 from zope.interface.verify import verifyObject
 
-from bibliograph.parsing.tests import setup
-from bibliograph.parsing.tests.base import TestEntries
 from bibliograph.parsing.interfaces import IBibliographyParser
 from bibliograph.parsing.parsers.xml import XMLParser
+
+from bibliograph.parsing.tests import (
+    MEDLINE_TEST_BIB,
+    MEDLINE_TEST_MED,
+    MEDLINE_TEST_XML,
+    UMLAUTS_TEST_XML,
+)
+from bibliograph.parsing.tests.base import TestEntries
+
 
 class testXMLParser(unittest.TestCase):
     """tests to cover the XML parser"""
@@ -31,7 +38,7 @@ class testXMLParser(unittest.TestCase):
     def test_parser_with_umlauts(self):
         parser = XMLParser()
         if parser.isAvailable():
-            source = open(setup.UMLAUTS_TEST_XML, 'r').read()
+            source = open(UMLAUTS_TEST_XML, 'r').read()
             self.failUnless(source)
 
             entries = TestEntries(parser.getEntries(source))
@@ -44,7 +51,7 @@ class testXMLParser(unittest.TestCase):
         """test the functioning of the parser"""
         parser = XMLParser()
         if parser.isAvailable():
-            source = open(setup.MEDLINE_TEST_XML, 'r').read()
+            source = open(MEDLINE_TEST_XML, 'r').read()
             self.failUnless(source)
             
             entries = TestEntries(parser.getEntries(source))
@@ -75,9 +82,9 @@ please make sure bibutils is installed to run all tests. """
     def test_FormatDetection(self):
         parser = XMLParser()
     
-        s1 = open(setup.MEDLINE_TEST_XML, 'r').read()
-        s2 = open(setup.MEDLINE_TEST_BIB, 'r').read()
-        s3 = open(setup.MEDLINE_TEST_MED, 'r').read()
+        s1 = open(MEDLINE_TEST_XML, 'r').read()
+        s2 = open(MEDLINE_TEST_BIB, 'r').read()
+        s3 = open(MEDLINE_TEST_MED, 'r').read()
         
         self.failUnless(parser.checkFormat(s1), 'XML Parser failed to detect XML(MODS) format')
         self.failIf(parser.checkFormat(s2), 'XML Parser incorrectly detected Bibtex format as XML(MODS)')
